@@ -1,0 +1,4 @@
+target/
+target/*
+tmp/
+agent_smith_lite.uuid

@@ -1,0 +1,20 @@
+[package]
+name = "agent-smith-lite"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "agent_smith_lite"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }
+nom = "7"
+nvml-wrapper = "0.12"
+tokio-tungstenite = { version = "0.21", features = ["native-tls"] }
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sysinfo = "0.30"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
