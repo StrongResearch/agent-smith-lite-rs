@@ -106,7 +106,7 @@ async fn do_join(
             "phx_join",
             build_join_payload(secret, accelerator_type),
         );
-        tx.try_send(Message::Text(join_msg.serialize()))
+        tx.try_send(Message::Text(join_msg.serialize().into()))
             .map_err(|e| format!("channel send error: {}", e))?;
         info!(
             "phx_join → {} (attempt {}, join_ref={})",
@@ -183,7 +183,7 @@ async fn heartbeat_loop(tx: Tx) {
             "heartbeat",
             json!({}),
         );
-        if tx.try_send(Message::Text(msg.serialize())).is_err() {
+        if tx.try_send(Message::Text(msg.serialize().into())).is_err() {
             break;
         }
         debug!("Sent heartbeat (ref {})", ref_num);
@@ -211,7 +211,7 @@ async fn monitor_loop(tx: Tx, topic: String, join_ref: String) {
             "push:hardware",
             stats,
         );
-        if tx.try_send(Message::Text(msg.serialize())).is_err() {
+        if tx.try_send(Message::Text(msg.serialize().into())).is_err() {
             break;
         }
         debug!("Pushed hardware stats (ref {})", ref_num);
@@ -299,7 +299,7 @@ fn dispatch_push(event: &str, _payload: &serde_json::Value) -> serde_json::Value
 
 fn send(tx: &Tx, topic: &str, join_ref: &str, event: &str, payload: serde_json::Value) {
     let msg = PhxMessage::new(Some(join_ref), None, topic, event, payload);
-    tx.try_send(Message::Text(msg.serialize())).ok();
+    tx.try_send(Message::Text(msg.serialize().into())).ok();
 }
 
 fn build_join_payload(secret: &str, accelerator_type: &str) -> serde_json::Value {
