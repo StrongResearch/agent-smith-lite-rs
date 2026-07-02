@@ -29,7 +29,7 @@ impl Monitor {
         let mut sys = System::new();
         sys.refresh_cpu_usage();
         let cpu_count = sys.cpus().len();
-        let phys_cpu_count = sys.physical_core_count().unwrap_or(0);
+        let phys_cpu_count = System::physical_core_count().unwrap_or(0);
         Self {
             sys,
             components: Components::new_with_refreshed_list(),
@@ -52,7 +52,7 @@ impl Monitor {
         self.prev_ticks = ticks;
 
         self.sys.refresh_memory();
-        self.components.refresh();
+        self.components.refresh(true);
 
         json!({
             "cpu":  self.collect_cpu(util_cpu),
@@ -178,7 +178,8 @@ fn read_cpu_temp(components: &Components) -> f64 {
                 l.contains("cpu") || l.starts_with("core")
             })
         })
-        .map(|c| c.temperature() as f64)
+        .and_then(|c| c.temperature())
+        .map(|c| c as f64)
         .unwrap_or(-1.0)
 }
 
