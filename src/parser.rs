@@ -1,6 +1,5 @@
 use nom::{
-    Parser,
-    IResult,
+    IResult, Parser,
     bytes::complete::{tag, take_till},
     character::complete::{digit1, line_ending, space1},
     combinator::{map_res, opt},
