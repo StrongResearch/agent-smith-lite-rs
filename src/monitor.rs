@@ -45,9 +45,12 @@ impl Monitor {
             .ok()
             .and_then(|s| parse_proc_stat(&s));
 
+        self.sys.refresh_cpu_usage();
+
         let util_cpu = match (&self.prev_ticks, &ticks) {
             (Some(prev), Some(curr)) => curr.usage_pct(prev),
-            _ => -1,
+            // No /proc/stat (e.g. macOS): fall back to sysinfo's global CPU usage.
+            _ => self.sys.global_cpu_usage().round() as i64,
         };
         self.prev_ticks = ticks;
 
