@@ -1,5 +1,5 @@
 use nom::{
-    IResult,
+    IResult, Parser,
     bytes::complete::{tag, take_till},
     character::complete::{digit1, line_ending, space1},
     combinator::{map_res, opt},
@@ -28,7 +28,7 @@ impl CpuTicks {
 }
 
 fn u64_val(input: &str) -> IResult<&str, u64> {
-    map_res(digit1, |s: &str| s.parse::<u64>())(input)
+    map_res(digit1, |s: &str| s.parse::<u64>()).parse(input)
 }
 
 fn cpu_ticks_line(input: &str) -> IResult<&str, CpuTicks> {
@@ -44,7 +44,7 @@ fn cpu_ticks_line(input: &str) -> IResult<&str, CpuTicks> {
     let (i, _) = space1(i)?;
     let (i, iowait) = u64_val(i)?;
     let (i, _) = take_till(|c| c == '\n')(i)?;
-    let (i, _) = opt(line_ending)(i)?;
+    let (i, _) = opt(line_ending).parse(i)?;
     Ok((
         i,
         CpuTicks {
